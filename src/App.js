@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.css';
+import axios from 'axios';
 
 import FilmListing from "./FilmListing"
 import FilmDetails from "./FilmDetails"
@@ -29,9 +30,18 @@ export default class App extends Component {
   };
 
   handleDetailsClick = (film) => {
-    console.log("Fetching details for " + film);
-    this.setState({current : film})
+    const url = `https://api.themoviedb.org/3/movie/${film.id}?api_key=${TMDB.api_key}&append_to_response=videos,images&language=en`
+    axios({
+      method: 'GET',
+      url: url
+    }).then(response => {
+      console.log(response) // take a look at what you get back!
+      console.log(`Fetching details for ${film.title}`);
+      this.setState({current : film})
+    })
+
   };
+
 
   render() {
     return (
@@ -39,7 +49,7 @@ export default class App extends Component {
         <FilmListing 
         movie = {this.state.films} faves = {this.state.faves} onFaveToggle = {this.handleFaveToggle} handleDetailsClick = {this.handleDetailsClick}/>
 
-        <FilmDetails current = {this.state.current} />
+        <FilmDetails film = {this.state.current} />
       </div>
     )
   }
